@@ -65,7 +65,7 @@ public class MainFragment extends android.support.v4.app.Fragment {
             }
         });
 //        mTextView = (LinearLayout) root.findViewById(R.id.edit_search);
-        mImageView = (ImageView) root.findViewById(R.id.scrolling_header);
+//        mImageView = (ImageView) root.findViewById(R.id.scrolling_header);
 //        mTextView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -76,6 +76,6 @@ public class MainFragment extends android.support.v4.app.Fragment {
     }
 
     public void moveEditTextPosition(float positionOffset) {
-        mImageView.setTranslationY(-300 * positionOffset);
+//        mImageView.setTranslationY(-300 * positionOffset);
     }
 }

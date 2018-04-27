@@ -35,18 +35,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mImageView = (ImageView) findViewById(R.id.scrolling_header);
         mCircleIndicator = (CircleIndicator) findViewById(R.id.indicator);
         mViewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.e("LWQ", "positionOffset:" + positionOffset);
-                Log.e("LWQ", "positionOffsetPixels:" + positionOffsetPixels);
-                Log.e("LWQ", "position:" + position);
-                if (mCurrentIndex == position) {
-                    if (mMainFragment != null) {
-                        mMainFragment.moveEditTextPosition(positionOffset);
-                    }
+                if (positionOffset != 0) {
+                    mImageView.setTranslationY(-positionOffset * 300);
                 }
             }
 
@@ -58,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Log.e("LWQ", "state:" + state);
                 if (state == 1) {
                     ScrollOrietationUtils.getInstance().setChangePage(true);
                 } else if (state == 0) {
@@ -69,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setOffscreenPageLimit(2);
         mCircleIndicator.setViewPager(mViewPager);
     }
-
 
     class MyFragmentAdapter extends FragmentPagerAdapter {
 
