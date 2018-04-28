@@ -1,5 +1,6 @@
 package com.example.mi.coordinatorlayoutdemo;
 
+import android.animation.ArgbEvaluator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -19,18 +20,24 @@ import java.lang.ref.WeakReference;
  */
 public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<RecyclerView> {
 
+    private ArgbEvaluator argbEvaluator;
     private boolean isExpanded = false;
     private boolean isScrolling = false;
 
     private WeakReference<View> headcard;
+    private WeakReference<ViewPager> viewpager;
     private WeakReference<View> topsite;
     private Scroller scroller;
     private Handler handler;
+
+    private RecyclerView mRecyclerView;
 
     public HeaderScrollingBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         scroller = new Scroller(context);
         handler = new Handler();
+        argbEvaluator = new ArgbEvaluator();
+
     }
 
     public boolean isExpanded() {
@@ -39,23 +46,34 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, RecyclerView child, View dependency) {
+        mRecyclerView = child;
         ViewPager viewPager = (ViewPager) ((CoordinatorLayout) parent).getParent();
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) viewPager.getParent();
         View view = coordinatorLayout.getChildAt(0);
         headcard = new WeakReference<>(view);
+        viewpager = new WeakReference<>(viewPager);
         topsite = new WeakReference<>(dependency);
+        child.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                scrollDistance -= dy;
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         return true;
     }
 
-//    @Override
-//    public boolean onLayoutChild(CoordinatorLayout parent, RecyclerView child, int layoutDirection) {
-//        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
-//        if (lp.height == CoordinatorLayout.LayoutParams.MATCH_PARENT) {
-//            child.layout(0, 0, parent.getWidth(), (int) (parent.getHeight() + 420));
-//            return true;
-//        }
-//        return super.onLayoutChild(parent, child, layoutDirection);
-//    }
+    private int scrollDistance;
+
+    @Override
+    public boolean onLayoutChild(CoordinatorLayout parent, RecyclerView child, int layoutDirection) {
+        CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
+        if (lp.height == CoordinatorLayout.LayoutParams.MATCH_PARENT) {
+            child.layout(0, 0, parent.getWidth(), (int) (parent.getHeight()));
+            return true;
+        }
+        return super.onLayoutChild(parent, child, layoutDirection);
+    }
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, RecyclerView child, View dependency) {
@@ -63,14 +81,16 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
             return false;
         }
 
-        Log.e("LWQ", "onDependentViewChanged");
         Resources resources = getHeadcard().getResources();
         final float progress = 1 + getHeadcard().getTranslationY() / 300;
 
-        Log.e("LWQ", "!!!!!!!!!!!!!!!!!!!!!" + getHeadcard().getTranslationY());
-        Log.e("LWQ", "!!!!!!!!!!!!!!!!!!!!!progress " + progress);
-        Log.e("LWQ", "!!!!!!!!!!!!!!!!!!!!!" + 420 * progress);
         child.setTranslationY(420 * progress);
+
+//        dependency.setBackgroundColor((int) argbEvaluator.evaluate(
+//                progress,
+//                resources.getColor(R.color.grey),
+//                resources.getColor(R.color.white)));
+
 
 //        getTopSite().setTranslationY(50 * (progress-1));
 //        getTopSite().setTranslationY(-420 * progress);
@@ -79,7 +99,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 //        dependency.setScaleY(scale);
 
         dependency.setAlpha(progress);
-        dependency.setTranslationY(-50 * (1 - progress));
+//        dependency.setTranslationY(-50 * (1 - progress));
 
         return true;
     }
@@ -116,34 +136,22 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
         Log.e("LWQ", "newTranslateY:" + newTranslateY);
         Log.e("LWQ", "minHeaderTranslate:" + minHeaderTranslate);
+        Log.e("LWQ", "child.getScrollY():" + child.getScrollY());
         if (newTranslateY > 0) {
             return;
         }
-        if (newTranslateY > minHeaderTranslate) {
+        if (newTranslateY > minHeaderTranslate && scrollDistance == 0) {
+//        if (newTranslateY > minHeaderTranslate) {
             ((ViewPager) coordinatorLayout.getParent()).setTranslationY(newTranslateY);
             //移动头图
-            Log.e("LWQ", "dependentView.setTranslationY(newTranslateY);");
+            Log.e("LWQ", "dependentView.setTranslationY(newTranslateY):"+dy);
             dependentView.setTranslationY(newTranslateY);
-//            if (getTopSite() != null) {
-//                getTopSite().setTranslationY(newTranslateY);
-//            }
             consumed[1] = dy;
         }
     }
 
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, RecyclerView child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-//        if (dyUnconsumed > 0) {
-//            return;
-//        }
-//
-//        View dependentView = getHeadcard();
-//        float newTranslateY = dependentView.getTranslationY() - dyUnconsumed;
-//        final float maxHeaderTranslate = 0;
-//
-//        if (newTranslateY < maxHeaderTranslate) {
-//            dependentView.setTranslationY(newTranslateY);
-//        }
     }
 
     @Override
@@ -190,8 +198,8 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         }
 
         float targetTranslateY = targetState ? minHeaderTranslate : 0;
-
-        scroller.startScroll(0, (int) translateY, 0, (int) (targetTranslateY - translateY), (int) (1000000 / Math.abs(velocity)));
+        Log.e("QWE", "minHeaderTranslate" + minHeaderTranslate);
+        scroller.startScroll(0, (int) translateY, 0, (int) (targetTranslateY - translateY), (int) (100000 / Math.abs(velocity)));
         handler.post(flingRunnable);
         isScrolling = true;
         return true;
@@ -205,16 +213,23 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         return headcard.get();
     }
 
+    private View getViewPager() {
+        return viewpager.get();
+    }
+
     private View getTopSite() {
         return topsite.get();
     }
+
 
     private Runnable flingRunnable = new Runnable() {
         @Override
         public void run() {
             if (scroller.computeScrollOffset()) {
                 getHeadcard().setTranslationY(scroller.getCurrY());
-                Log.e("LWQ", "getHeadcard().setTranslationY(scroller.getCurrY()");
+                getViewPager().setTranslationY(scroller.getCurrY());
+//                mRecyclerView.setTranslationY((float) (scroller.getCurrY()));
+                Log.e("LWQ", "getHeadcard().setTranslationY(scroller.getCurrY()" + scroller.getCurrY());
                 handler.post(this);
             } else {
                 isExpanded = getHeadcard().getTranslationY() != 0;

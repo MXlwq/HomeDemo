@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -42,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (positionOffset != 0) {
-                    mImageView.setTranslationY(-positionOffset * 300);
+                    if (mImageView.getTranslationY() <= -300) {
+                    } else {
+                        mImageView.setTranslationY(-positionOffset * 300);
+                        mViewPager.setTranslationY(0);
+                    }
                 }
             }
 
@@ -62,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mViewPager.setOffscreenPageLimit(2);
+
         mCircleIndicator.setViewPager(mViewPager);
     }
 
