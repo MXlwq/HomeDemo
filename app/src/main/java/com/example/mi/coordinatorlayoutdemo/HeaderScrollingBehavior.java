@@ -28,6 +28,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
     private WeakReference<ViewPager> viewpager;
     private WeakReference<View> topsite;
     private Scroller scroller;
+    private Scroller mRVScroller;
     private Handler handler;
 
     private RecyclerView mRecyclerView;
@@ -35,6 +36,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
     public HeaderScrollingBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
         scroller = new Scroller(context);
+        mRVScroller = new Scroller(context);
         handler = new Handler();
         argbEvaluator = new ArgbEvaluator();
 
@@ -53,17 +55,8 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         headcard = new WeakReference<>(view);
         viewpager = new WeakReference<>(viewPager);
         topsite = new WeakReference<>(dependency);
-        child.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                scrollDistance -= dy;
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
         return true;
     }
-
-    private int scrollDistance;
 
     @Override
     public boolean onLayoutChild(CoordinatorLayout parent, RecyclerView child, int layoutDirection) {
@@ -86,20 +79,10 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
         child.setTranslationY(420 * progress);
 
-//        dependency.setBackgroundColor((int) argbEvaluator.evaluate(
-//                progress,
-//                resources.getColor(R.color.grey),
-//                resources.getColor(R.color.white)));
-
-
-//        getTopSite().setTranslationY(50 * (progress-1));
 //        getTopSite().setTranslationY(-420 * progress);
-        float scale = 1 + 0.4f * (1.f - progress);
-//        dependency.setScaleX(scale);
-//        dependency.setScaleY(scale);
 
-        dependency.setAlpha(progress);
-//        dependency.setTranslationY(-50 * (1 - progress));
+//        dependency.setAlpha(progress);
+        dependency.setTranslationY(-50 * (1 - progress));
 
         return true;
     }
@@ -118,15 +101,13 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
             return;
         }
         scroller.abortAnimation();
+        mRVScroller.abortAnimation();
         isScrolling = false;
         super.onNestedScrollAccepted(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
     }
 
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, RecyclerView child, View target, int dx, int dy, int[] consumed) {
-//        if (dy < 0) {
-//            return;
-//        }
         if (ScrollOrietationUtils.getInstance().isChangePage()) {
             return;
         }
@@ -134,17 +115,12 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         float newTranslateY = dependentView.getTranslationY() - dy;
         float minHeaderTranslate = -(dependentView.getHeight() - getDependentViewCollapsedHeight());
 
-        Log.e("LWQ", "newTranslateY:" + newTranslateY);
-        Log.e("LWQ", "minHeaderTranslate:" + minHeaderTranslate);
-        Log.e("LWQ", "child.getScrollY():" + child.getScrollY());
         if (newTranslateY > 0) {
             return;
         }
-        if (newTranslateY > minHeaderTranslate && scrollDistance == 0) {
-//        if (newTranslateY > minHeaderTranslate) {
+        if (newTranslateY > minHeaderTranslate && ScrollOrietationUtils.getInstance().isCanPullDown()) {
             ((ViewPager) coordinatorLayout.getParent()).setTranslationY(newTranslateY);
             //移动头图
-            Log.e("LWQ", "dependentView.setTranslationY(newTranslateY):"+dy);
             dependentView.setTranslationY(newTranslateY);
             consumed[1] = dy;
         }
@@ -175,7 +151,9 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
     private boolean onUserStopDragging(float velocity) {
         View dependentView = getHeadcard();
         float translateY = dependentView.getTranslationY();
+        float RVtranslateY = mRecyclerView.getTranslationY();
         float minHeaderTranslate = -(dependentView.getHeight() - getDependentViewCollapsedHeight());
+        float minRVHeaderTranslate = 420;
 
         if (translateY == 0 || translateY == minHeaderTranslate) {
             return false;
@@ -198,9 +176,11 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         }
 
         float targetTranslateY = targetState ? minHeaderTranslate : 0;
-        Log.e("QWE", "minHeaderTranslate" + minHeaderTranslate);
+        float rvtargetTranslateY = targetState ? 0 : minRVHeaderTranslate;
         scroller.startScroll(0, (int) translateY, 0, (int) (targetTranslateY - translateY), (int) (100000 / Math.abs(velocity)));
+        mRVScroller.startScroll(0, (int) RVtranslateY, 0, (int) (rvtargetTranslateY - RVtranslateY), (int) (100000 / Math.abs(velocity)));
         handler.post(flingRunnable);
+        handler.post(RVflingRunnable);
         isScrolling = true;
         return true;
     }
@@ -228,8 +208,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
             if (scroller.computeScrollOffset()) {
                 getHeadcard().setTranslationY(scroller.getCurrY());
                 getViewPager().setTranslationY(scroller.getCurrY());
-//                mRecyclerView.setTranslationY((float) (scroller.getCurrY()));
-                Log.e("LWQ", "getHeadcard().setTranslationY(scroller.getCurrY()" + scroller.getCurrY());
+                Log.e("LWQ", "flingRunnable:" + scroller.getCurrY());
                 handler.post(this);
             } else {
                 isExpanded = getHeadcard().getTranslationY() != 0;
@@ -238,4 +217,22 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         }
     };
 
+    private Runnable RVflingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mRVScroller.computeScrollOffset()) {
+                mRecyclerView.setTranslationY((float) (mRVScroller.getCurrY()));
+                Log.e("LWQ", "RVflingRunnable:" + mRVScroller.getCurrY());
+                if (mRVScroller.getCurrY() == 0) {
+                    ScrollOrietationUtils.getInstance().setCanPullDown(false);
+                } else {
+                    ScrollOrietationUtils.getInstance().setCanPullDown(true);
+                }
+                handler.post(this);
+            } else {
+                isExpanded = getHeadcard().getTranslationY() != 0;
+                isScrolling = false;
+            }
+        }
+    };
 }

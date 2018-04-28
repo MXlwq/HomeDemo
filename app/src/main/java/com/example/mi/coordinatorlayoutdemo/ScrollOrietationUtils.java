@@ -15,6 +15,7 @@ public class ScrollOrietationUtils {
     }
 
     private boolean isChangePage;
+    private boolean canPullDown = true;
 
     public boolean isChangePage() {
         return isChangePage;
@@ -22,5 +23,13 @@ public class ScrollOrietationUtils {
 
     public void setChangePage(boolean changePage) {
         isChangePage = changePage;
+    }
+
+    public boolean isCanPullDown() {
+        return canPullDown;
+    }
+
+    public void setCanPullDown(boolean canPullDown) {
+        this.canPullDown = canPullDown;
     }
 }

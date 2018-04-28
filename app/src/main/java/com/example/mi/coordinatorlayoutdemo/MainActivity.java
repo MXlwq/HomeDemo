@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private CircleIndicator mCircleIndicator;
 
+    private Button mHomeButton;
     private int mCurrentIndex;
 
     @Override
@@ -38,6 +40,16 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mImageView = (ImageView) findViewById(R.id.scrolling_header);
         mCircleIndicator = (CircleIndicator) findViewById(R.id.indicator);
+        mHomeButton = (Button) findViewById(R.id.btn_home);
+        mHomeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO 回到初始状态
+                mImageView.setTranslationY(0);
+                mViewPager.setTranslationY(0);
+                mMainFragment.resetRV();
+            }
+        });
         mViewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

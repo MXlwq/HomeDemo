@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class MainFragment extends android.support.v4.app.Fragment {
 
     private RecyclerView recyclerView;
+    private ImageView topsite;
     private LinearLayout mTextView;
     private ImageView mImageView;
 
@@ -32,6 +33,7 @@ public class MainFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_main, container, false);
         recyclerView = (RecyclerView) root.findViewById(R.id.rv);
+        topsite=root.findViewById(R.id.topsite);
         recyclerView.setAdapter(new RecyclerView.Adapter() {
             @Override
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -77,5 +79,12 @@ public class MainFragment extends android.support.v4.app.Fragment {
 
     public void moveEditTextPosition(float positionOffset) {
 //        mImageView.setTranslationY(-300 * positionOffset);
+    }
+
+    public void resetRV() {
+        recyclerView.setTranslationY(420);
+        recyclerView.smoothScrollToPosition(0);
+        topsite.setTranslationY(0);
+        ScrollOrietationUtils.getInstance().setCanPullDown(true);
     }
 }
