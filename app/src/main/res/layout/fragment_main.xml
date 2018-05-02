@@ -13,8 +13,8 @@
         android:id="@+id/topsite"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:src="@drawable/topsite"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        android:src="@drawable/topsite" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv"
@@ -22,6 +22,6 @@
         android:layout_height="match_parent"
         android:background="#fff"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_behavior="com.example.mi.coordinatorlayoutdemo.HeaderScrollingBehavior"/>
+        app:layout_behavior="com.example.mi.coordinatorlayoutdemo.HeaderScrollingBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

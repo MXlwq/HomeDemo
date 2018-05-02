@@ -51,7 +51,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         mRecyclerView = child;
         ViewPager viewPager = (ViewPager) ((CoordinatorLayout) parent).getParent();
         CoordinatorLayout coordinatorLayout = (CoordinatorLayout) viewPager.getParent();
-        View view = coordinatorLayout.getChildAt(0);
+        View view = coordinatorLayout.getChildAt(2);
         headcard = new WeakReference<>(view);
         viewpager = new WeakReference<>(viewPager);
         topsite = new WeakReference<>(dependency);
@@ -76,13 +76,20 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
         Resources resources = getHeadcard().getResources();
         final float progress = 1 + getHeadcard().getTranslationY() / 300;
+//        Log.e("QWE", "child:" + child.getTranslationY());
+//        Log.e("QWE", "ViewPager:" + getViewPager().getTranslationY());
 
-        child.setTranslationY(420 * progress);
+//        float transY = 705 - child.getTranslationY() - getViewPager().getTranslationY();
+//        float ratio=transY/720f;
+//        Log.e("QWE", "ratio:" + ratio);
+
+//        child.setTranslationY(420 + 95 * 3);
+        child.setTranslationY(420 * progress + 95 * 3);
 
 //        getTopSite().setTranslationY(-420 * progress);
 
 //        dependency.setAlpha(progress);
-        dependency.setTranslationY(-50 * (1 - progress));
+        dependency.setTranslationY(-50 * (1 - progress) + 95 * 3);
 
         return true;
     }
@@ -113,12 +120,15 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         }
         View dependentView = getHeadcard();
         float newTranslateY = dependentView.getTranslationY() - dy;
+        Log.e("LWQ", "newTranslateY:" + newTranslateY);
+        Log.e("LWQ", "dy:" + dy);
         float minHeaderTranslate = -(dependentView.getHeight() - getDependentViewCollapsedHeight());
 
         if (newTranslateY > 0) {
             return;
         }
         if (newTranslateY > minHeaderTranslate && ScrollOrietationUtils.getInstance().isCanPullDown()) {
+            //移动ViewPager
             ((ViewPager) coordinatorLayout.getParent()).setTranslationY(newTranslateY);
             //移动头图
             dependentView.setTranslationY(newTranslateY);
@@ -153,7 +163,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         float translateY = dependentView.getTranslationY();
         float RVtranslateY = mRecyclerView.getTranslationY();
         float minHeaderTranslate = -(dependentView.getHeight() - getDependentViewCollapsedHeight());
-        float minRVHeaderTranslate = 420;
+        float minRVHeaderTranslate = 420 + 95 * 3;
 
         if (translateY == 0 || translateY == minHeaderTranslate) {
             return false;
@@ -176,7 +186,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         }
 
         float targetTranslateY = targetState ? minHeaderTranslate : 0;
-        float rvtargetTranslateY = targetState ? 0 : minRVHeaderTranslate;
+        float rvtargetTranslateY = targetState ? 95 * 3 : minRVHeaderTranslate;
         scroller.startScroll(0, (int) translateY, 0, (int) (targetTranslateY - translateY), (int) (100000 / Math.abs(velocity)));
         mRVScroller.startScroll(0, (int) RVtranslateY, 0, (int) (rvtargetTranslateY - RVtranslateY), (int) (100000 / Math.abs(velocity)));
         handler.post(flingRunnable);
@@ -208,7 +218,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
             if (scroller.computeScrollOffset()) {
                 getHeadcard().setTranslationY(scroller.getCurrY());
                 getViewPager().setTranslationY(scroller.getCurrY());
-                Log.e("LWQ", "flingRunnable:" + scroller.getCurrY());
+                Log.d("LWQ", "flingRunnable:" + scroller.getCurrY());
                 handler.post(this);
             } else {
                 isExpanded = getHeadcard().getTranslationY() != 0;
@@ -222,11 +232,13 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         public void run() {
             if (mRVScroller.computeScrollOffset()) {
                 mRecyclerView.setTranslationY((float) (mRVScroller.getCurrY()));
-                Log.e("LWQ", "RVflingRunnable:" + mRVScroller.getCurrY());
-                if (mRVScroller.getCurrY() == 0) {
+                Log.d("LWQ", "RVflingRunnable:" + mRVScroller.getCurrY());
+                if (mRVScroller.getCurrY() == 95 * 3) {
                     ScrollOrietationUtils.getInstance().setCanPullDown(false);
+                    ((MyViewPager)getViewPager()).setPagingEnabled(false);
                 } else {
                     ScrollOrietationUtils.getInstance().setCanPullDown(true);
+                    ((MyViewPager)getViewPager()).setPagingEnabled(true);
                 }
                 handler.post(this);
             } else {

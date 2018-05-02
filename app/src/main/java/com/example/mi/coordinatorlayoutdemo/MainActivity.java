@@ -47,7 +47,10 @@ public class MainActivity extends AppCompatActivity {
                 //TODO 回到初始状态
                 mImageView.setTranslationY(0);
                 mViewPager.setTranslationY(0);
-                mMainFragment.resetRV();
+                if (mMainFragment != null) {
+                    mMainFragment.resetRV();
+                }
+                ((MyViewPager)mViewPager).setPagingEnabled(true);
             }
         });
         mViewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
@@ -56,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (positionOffset != 0) {
                     if (mImageView.getTranslationY() <= -300) {
+//                        mViewPager.setTranslationY(0);
+
                     } else {
                         mImageView.setTranslationY(-positionOffset * 300);
                         mViewPager.setTranslationY(0);
@@ -104,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 mMainFragment = (MainFragment) fragment;
             } else if (position == 1) {
                 fragment = new SecondFragment();
+                mSecondFragment = (SecondFragment) fragment;
             }
             return fragment;
         }
@@ -120,4 +126,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private MainFragment mMainFragment;
+    private SecondFragment mSecondFragment;
 }
