@@ -55,7 +55,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         headcard = new WeakReference<>(view);
         viewpager = new WeakReference<>(viewPager);
         topsite = new WeakReference<>(dependency);
-        return true;
+        return !ScrollOrietationUtils.getInstance().isChangePage();
     }
 
     @Override
@@ -70,9 +70,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, RecyclerView child, View dependency) {
-        if (ScrollOrietationUtils.getInstance().isChangePage()) {
-            return false;
-        }
+        Log.e("LWQ", "onDependentViewChanged:" + dependency.getTranslationY());
 
         Resources resources = getHeadcard().getResources();
         final float progress = 1 + getHeadcard().getTranslationY() / 300;
@@ -96,17 +94,11 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
     @Override
     public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, RecyclerView child, View directTargetChild, View target, int nestedScrollAxes) {
-        if (ScrollOrietationUtils.getInstance().isChangePage()) {
-            return false;
-        }
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(CoordinatorLayout coordinatorLayout, RecyclerView child, View directTargetChild, View target, int nestedScrollAxes) {
-        if (ScrollOrietationUtils.getInstance().isChangePage()) {
-            return;
-        }
         scroller.abortAnimation();
         mRVScroller.abortAnimation();
         isScrolling = false;
@@ -115,9 +107,8 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
     @Override
     public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, RecyclerView child, View target, int dx, int dy, int[] consumed) {
-        if (ScrollOrietationUtils.getInstance().isChangePage()) {
-            return;
-        }
+        Log.e("LWQ", "onNestedPreScroll:" + dy);
+
         View dependentView = getHeadcard();
         float newTranslateY = dependentView.getTranslationY() - dy;
         Log.e("LWQ", "newTranslateY:" + newTranslateY);
@@ -142,17 +133,11 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
 
     @Override
     public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, RecyclerView child, View target, float velocityX, float velocityY) {
-        if (ScrollOrietationUtils.getInstance().isChangePage()) {
-            return false;
-        }
         return onUserStopDragging(velocityY);
     }
 
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, RecyclerView child, View target) {
-        if (ScrollOrietationUtils.getInstance().isChangePage()) {
-            return;
-        }
         if (!isScrolling) {
             onUserStopDragging(800);
         }
@@ -235,10 +220,10 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
                 Log.d("LWQ", "RVflingRunnable:" + mRVScroller.getCurrY());
                 if (mRVScroller.getCurrY() == 95 * 3) {
                     ScrollOrietationUtils.getInstance().setCanPullDown(false);
-                    ((MyViewPager)getViewPager()).setPagingEnabled(false);
+                    ((MyViewPager) getViewPager()).setPagingEnabled(false);
                 } else {
                     ScrollOrietationUtils.getInstance().setCanPullDown(true);
-                    ((MyViewPager)getViewPager()).setPagingEnabled(true);
+                    ((MyViewPager) getViewPager()).setPagingEnabled(true);
                 }
                 handler.post(this);
             } else {
