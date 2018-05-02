@@ -29,4 +29,14 @@ public class MyViewPager extends ViewPager {
     public void setPagingEnabled(boolean canScroll) {
         this.isPagingEnabled = canScroll;
     }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        final int width = MeasureSpec.getSize(widthMeasureSpec);
+        final int height = MeasureSpec.getSize(heightMeasureSpec);
+        //TODO扩大ViewPager高度到全屏
+        setMeasuredDimension(width, height + 285);
+    }
 }
