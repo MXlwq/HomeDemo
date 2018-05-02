@@ -82,9 +82,9 @@ public class MainFragment extends android.support.v4.app.Fragment {
     }
 
     public void resetRV() {
-        recyclerView.setTranslationY(420);
+        recyclerView.setTranslationY(420+95*3);
         recyclerView.smoothScrollToPosition(0);
-        topsite.setTranslationY(0);
+        topsite.setTranslationY(95*3);
         ScrollOrietationUtils.getInstance().setCanPullDown(true);
     }
 }

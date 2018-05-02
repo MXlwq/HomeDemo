@@ -20,6 +20,7 @@
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="top"
         android:background="#fff"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_behavior="com.example.mi.coordinatorlayoutdemo.HeaderScrollingBehavior" />
