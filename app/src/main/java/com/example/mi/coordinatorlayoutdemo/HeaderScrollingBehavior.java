@@ -123,7 +123,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         if (dependentView.getTranslationY() - dy > 0) {
             return;
         }
-        if (dependentView.getTranslationY() >= -300 && ScrollOrietationUtils.getInstance().isCanPullDown()) {
+        if (dependentView.getTranslationY() - dy >= -300 && ScrollOrietationUtils.getInstance().isCanPullDown()) {
             //移动ViewPager
             ((ViewPager) coordinatorLayout.getParent()).setTranslationY((float) (((ViewPager) coordinatorLayout.getParent()).getTranslationY() - dy * 28.5 / 70.5));
             child.setTranslationY((float) (child.getTranslationY() - dy * 42 / 70.5));
@@ -226,7 +226,7 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
             if (mRVScroller.computeScrollOffset()) {
                 mRecyclerView.setTranslationY((float) (mRVScroller.getCurrY()));
                 Log.d("LWQ", "RVflingRunnable:" + mRVScroller.getCurrY());
-                if (mRVScroller.getCurrY() >= 94 * 3) {
+                if (mRVScroller.getCurrY() <= 95 * 3) {
                     ScrollOrietationUtils.getInstance().setCanPullDown(false);
                     ((MyViewPager) getViewPager()).setPagingEnabled(false);
                 } else {
