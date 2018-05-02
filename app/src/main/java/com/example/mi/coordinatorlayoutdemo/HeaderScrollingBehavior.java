@@ -194,6 +194,11 @@ public class HeaderScrollingBehavior extends CoordinatorLayout.Behavior<Recycler
         return true;
     }
 
+//    @Override
+//    public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, RecyclerView child, View target, float velocityX, float velocityY) {
+//        return false;
+//    }
+
     private float getDependentViewCollapsedHeight() {
         return getHeadcard().getResources().getDimension(R.dimen.topsite_height);
     }
