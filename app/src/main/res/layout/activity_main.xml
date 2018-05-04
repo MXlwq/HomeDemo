@@ -7,21 +7,6 @@
     tools:context="com.example.mi.coordinatorlayoutdemo.MainActivity">
 
 
-    <com.example.mi.coordinatorlayoutdemo.MyViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="55dp" />
-
-    <me.relex.circleindicator.CircleIndicator
-        android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="50dp"
-        app:ci_drawable="@drawable/dot_select"
-        app:ci_drawable_unselected="@drawable/dot_unselect" />
-
     <ImageView
         android:id="@+id/scrolling_header"
         android:layout_width="match_parent"
@@ -29,10 +14,17 @@
         android:background="@drawable/custom_head_card_spring_bg"
         android:scaleType="centerCrop" />
 
+    <ImageView
+        android:id="@+id/scrolling_header_bg"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/grey" />
+
     <LinearLayout
         android:id="@+id/edit_search"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:background="@color/white"
         app:layout_behavior="com.example.mi.coordinatorlayoutdemo.HeaderFloatBehavior">
 
         <TextView
@@ -45,6 +37,21 @@
             android:text="搜索关键字"
             android:textColor="#90000000" />
     </LinearLayout>
+
+    <com.example.mi.coordinatorlayoutdemo.MyViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="150dp" />
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="50dp"
+        app:ci_drawable="@drawable/dot_select"
+        app:ci_drawable_unselected="@drawable/dot_unselect" />
 
     <Button
         android:id="@+id/btn_home"

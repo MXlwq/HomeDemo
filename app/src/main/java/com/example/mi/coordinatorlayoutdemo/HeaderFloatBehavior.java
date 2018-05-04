@@ -16,18 +16,17 @@ import java.lang.ref.WeakReference;
 public class HeaderFloatBehavior extends CoordinatorLayout.Behavior<View> {
 
     private WeakReference<View> dependentView;
-    private ArgbEvaluator argbEvaluator;
+    private WeakReference<View> dependentViewBackground;
 
     public HeaderFloatBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        argbEvaluator = new ArgbEvaluator();
     }
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, View child, View dependency) {
         if (dependency != null && dependency.getId() == R.id.scrolling_header) {
             dependentView = new WeakReference<>(dependency);
+            dependentViewBackground = new WeakReference<>(parent.getChildAt(1));
             return true;
         }
         return false;
@@ -46,15 +45,10 @@ public class HeaderFloatBehavior extends CoordinatorLayout.Behavior<View> {
         child.setTranslationY(translateY);
 
         // Background
-        child.setBackgroundColor((int) argbEvaluator.evaluate(
-                progress,
-                resources.getColor(R.color.grey),
-                resources.getColor(R.color.white)));
+        getDependentViewBackground().setAlpha(1 - progress);
 
         // Margins
         int collapsedMargin = (int) resources.getDimension(R.dimen.collapsed_float_margin);
-//        final float initMargin = resources.getDimension(R.dimen.init_float_margin);
-//        final int margin = (int) (collapsedMargin + (initMargin - collapsedMargin) * progress);
         CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) child.getLayoutParams();
         lp.setMargins(collapsedMargin, 0, collapsedMargin, 0);
         child.setLayoutParams(lp);
@@ -66,4 +60,7 @@ public class HeaderFloatBehavior extends CoordinatorLayout.Behavior<View> {
         return dependentView.get();
     }
 
+    private View getDependentViewBackground() {
+        return dependentViewBackground.get();
+    }
 }

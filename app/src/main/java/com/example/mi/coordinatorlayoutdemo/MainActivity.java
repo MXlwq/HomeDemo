@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LinearLayout mTextView;
     private ImageView mImageView;
+    private ImageView mImageViewBackground;
 
     private ViewPager mViewPager;
     private CircleIndicator mCircleIndicator;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mImageView = (ImageView) findViewById(R.id.scrolling_header);
+        mImageViewBackground = (ImageView) findViewById(R.id.scrolling_header_bg);
         mCircleIndicator = (CircleIndicator) findViewById(R.id.indicator);
         mHomeButton = (Button) findViewById(R.id.btn_home);
         mHomeButton.setOnClickListener(new View.OnClickListener() {
@@ -63,14 +65,14 @@ public class MainActivity extends AppCompatActivity {
 
                     } else {
                         mImageView.setTranslationY(-positionOffset * 300);
-                        mViewPager.setTranslationY(0);
+                        mImageViewBackground.setTranslationY(-positionOffset * 300);
+                        mViewPager.setTranslationY(-positionOffset * 300);
                     }
                 }
             }
 
             @Override
             public void onPageSelected(int position) {
-                Log.e("LWQ", "onPageSelected" + position);
                 mCurrentIndex = position;
             }
 
