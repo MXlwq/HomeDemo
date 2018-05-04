@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
  */
 public class SecondFragment extends android.support.v4.app.Fragment {
 
+    private String mTitle;
 
     public SecondFragment() {
         // Required empty public constructor
@@ -23,7 +25,15 @@ public class SecondFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_second2, container, false);
+        View v = inflater.inflate(R.layout.fragment_second2, container, false);
+        TextView title = (TextView) v.findViewById(R.id.card_title_tv);
+        title.setText(mTitle);
+        return v;
     }
 
+    public static android.support.v4.app.Fragment getInstance(String title) {
+        SecondFragment sf = new SecondFragment();
+        sf.mTitle = title;
+        return sf;
+    }
 }

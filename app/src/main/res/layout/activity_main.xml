@@ -18,13 +18,13 @@
         android:id="@+id/scrolling_header_bg"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@color/grey" />
+        android:background="@color/white" />
 
     <LinearLayout
         android:id="@+id/edit_search"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/white"
+        android:background="@color/grey"
         app:layout_behavior="com.example.mi.coordinatorlayoutdemo.HeaderFloatBehavior">
 
         <TextView
@@ -32,9 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
             android:gravity="center_vertical"
-            android:text="搜索关键字"
+            android:text="Search or enter web address"
             android:textColor="#90000000" />
     </LinearLayout>
 

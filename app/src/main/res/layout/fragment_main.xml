@@ -9,20 +9,45 @@
     android:orientation="vertical"
     tools:context="com.example.mi.coordinatorlayoutdemo.MainActivity">
 
-    <ImageView
+    <FrameLayout
         android:id="@+id/topsite"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:orientation="horizontal"
-        android:src="@drawable/topsite" />
+        android:layout_height="200dp">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
+        <ImageView
+            android:id="@+id/topsite_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src=" @drawable/topsite" />
+
+        <ImageView
+            android:id="@+id/topsite_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            android:background="#444444" />
+    </FrameLayout>
+
+    <com.flyco.tablayout.SlidingTabLayout
+        android:id="@+id/news_flow_tab"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:tl_indicator_color="#3F9FE0"
+        app:tl_indicator_height="1.5dp"
+        app:tl_indicator_width_equal_title="true"
+        app:tl_tab_padding="22dp"
+        app:tl_tab_space_equal="true"
+        app:tl_textSelectColor="#3F9FE0"
+        app:tl_textUnselectColor="#66000000"
+        app:tl_underline_color="#1A000000"
+        app:tl_underline_height="1dp" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/news_flow_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:background="#fff"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         app:layout_behavior="com.example.mi.coordinatorlayoutdemo.HeaderScrollingBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>
